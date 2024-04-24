@@ -1,0 +1,165 @@
+<template>
+    <div style="position: relative;">
+    <lightning-card title="Convert Lead">
+        <lightning-accordion class="top" active-section-name="Contact">
+            
+            <lightning-accordion-section name="Account" label="Account" class="acc slds-m-bottom_small">
+                <!-- <lightning-radio-group name="Acc" options={rgoptions} class="radio-combo-inline"></lightning-radio-group> -->
+                <div class="c-container">
+                    <lightning-layout>
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-input type="radio" label="Create New" class="slds-m-bottom_small"></lightning-input>
+                            <!-- <div class="slds-panel slds-p-around_small">
+                                <lightning-input type="text" label="Account Name" required="true"></lightning-input>
+                            </div> -->
+                            <div class="slds-p-around_small" style="background-color: white; border-radius: 2%;">
+                                <lightning-record-edit-form 
+                                    object-api-name={accobjectApiName}>
+                                    <lightning-input-field field-name="Name"></lightning-input-field>
+                                </lightning-record-edit-form>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <p>- OR -</p>
+                            <div class="vertical-line"></div>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-input type="radio" label="Choose Existing" class="slds-m-bottom_small"></lightning-input>
+                            <lightning-record-picker label="Account Search" placeholder="Search Accounts..."
+                            object-api-name="Account" class="slds-m-bottom_small" onchange={changeHandler}></lightning-record-picker>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="Contact" label="Contact" class="acc slds-m-bottom_small">
+                <div class="c-container">
+                    <lightning-layout>
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-input id="1" type="radio" label="Create New" class="slds-m-bottom_small" onchange={cr1}></lightning-input>
+                            <div class="slds-p-around_small" style="background-color: white; border-radius: 2%;">
+                                <lightning-record-edit-form 
+                                    object-api-name={conobjectApiName}>
+                                    <lightning-combobox
+                                        name="salutation"
+                                        label="Salutation"
+                                        placeholder="--None--"
+                                        value={sal_value}
+                                        onchange={handleChange}
+                                        options={sal_options}
+                                    >
+                                    </lightning-combobox>
+                                    <lightning-input-field field-name="FirstName"></lightning-input-field>
+                                    <lightning-input-field field-name="LastName"></lightning-input-field>
+                                </lightning-record-edit-form>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <p>- OR -</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-input id="2" type="radio" label="Choose Existing" class="slds-m-bottom_small" onchange={cr2}></lightning-input>
+                            <lightning-record-picker label="Contact Search" placeholder="Search Contacts..."
+                            object-api-name="Contact" class="slds-m-bottom_small"></lightning-record-picker>
+                            <lightning-input type="checkbox" label="Update Lead Source" class="slds-m-bottom_small"></lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </lightning-accordion-section>
+            
+
+            <lightning-accordion-section name="Opportunity" label="Opportunity" class="acc slds-m-bottom_small">
+                <div class="c-container">
+                    <lightning-layout>
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-input type="radio" label="Create New" class="slds-m-bottom_small" disabled={disab}></lightning-input>
+                            <div class="slds-p-around_small" style="background-color: white; border-radius: 2%;">
+                                <lightning-record-edit-form 
+                                    object-api-name={oppobjectApiName}>
+                                    <lightning-input-field field-name="Name" disabled={disab}></lightning-input-field>
+                                </lightning-record-edit-form>
+                            </div>
+                            <lightning-input type="checkbox" checked={isChecked} label="Don't create an opportunity upon conversion" onchange={donoppchange}></lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small">
+                            <p>- OR -</p>
+                            <div class="vertical-line"></div>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-input type="radio" label="Choose Existing" class="slds-m-bottom_small"></lightning-input>
+                                <p>Account Id is: {accId}</p>
+                                <div class="slds-p-around_small" style="background-color: white; border-radius: 2%;">
+                                    <lightning-record-edit-form 
+                                        record-id={accId}
+                                        object-api-name={accobjectApiName}>
+                                    <template lwc:if={accId}>
+                                        
+                                    </template>
+                                    <template lwc:else>
+                                        Select Account
+                                    </template>
+                                </lightning-record-edit-form>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </lightning-accordion-section>
+        </lightning-accordion>
+
+        <div class="c-container">
+            <lightning-layout>
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-record-picker
+                    label="Record Owner"
+                    placeholder="Search User..."
+                    object-api-name="User"
+                    >
+                    </lightning-record-picker>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-combobox type="text" label="Converted Status" required="true" options={convoptions}></lightning-combobox>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    
+        <lightning-accordion>
+        <lightning-accordion-section name="Task" label="Create Task" class="acc slds-m-bottom_small">
+            <div class="c-container">
+                <lightning-layout>
+                    <lightning-layout-item padding="around-small" flexibility="auto">
+                        <!-- <lightning-input type="radio" label="Create New" class="slds-m-bottom_small" disabled={disab}></lightning-input> -->
+                        <div class="slds-p-around_small" style="background-color: white; border-radius: 2%;">
+                            <lightning-record-edit-form 
+                                object-api-name={taskobjectApiName}
+                                fields="Tfields">
+                                <lightning-input-field field-name="Task" disabled={disab}></lightning-input-field>
+                            </lightning-record-edit-form>
+                        </div>
+                        <!-- <lightning-input type="checkbox" checked={isChecked} label="Don't create an opportunity upon conversion" onchange={donoppchange}></lightning-input> -->
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-accordion-section>
+    </lightning-accordion>
+
+
+        <div slot="footer">
+            <lightning-layout>
+            <lightning-layout-item size="12" class="slds-m-top_medium slds-text-align_right">
+                <lightning-button
+                    class="slds-m-top_small slds-m-right_small"
+                    label="Cancel"
+                    onclick={handleReset}
+                ></lightning-button>
+                <lightning-button
+                    class="slds-m-top_small"
+                    type="submit"
+                    label="Convert"
+                    variant="brand"
+                ></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+        </div>
+    </lightning-card>
+</div>
+</template>
